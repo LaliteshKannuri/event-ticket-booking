@@ -1,0 +1,28 @@
+server:
+  # Hosting platforms such as Render tell the app which port to use through PORT.
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: ticket-booking
+  datasource:
+    # Set DB_URL to override everything, or set DB_HOST / DB_PORT / DB_NAME separately (what Render provides).
+    url: ${DB_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ticketbooking}}
+    username: ${DB_USER:ticket}
+    password: ${DB_PASSWORD:ticket}
+  jpa:
+    # Off so lazy loading cannot leak into the web layer; services map entities to DTOs inside their transaction.
+    open-in-view: false
+    hibernate:
+      # Convenient for a demo. A production service would manage the schema with Flyway or Liquibase.
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+booking:
+  # How long a PENDING booking holds its seats before the expiry job releases them.
+  hold-minutes: 5
+  expiry-sweep-initial-delay-ms: 30000
+  expiry-sweep-ms: 30000
