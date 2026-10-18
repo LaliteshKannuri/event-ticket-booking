@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    # In-memory H2, so `mvn test` needs no database. LOCK_TIMEOUT lets concurrent writers wait for the row lock.
+    url: jdbc:h2:mem:booking-test;DB_CLOSE_DELAY=-1;LOCK_TIMEOUT=10000
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+booking:
+  # Keep the background job out of the way; tests call the service method directly.
+  expiry-sweep-initial-delay-ms: 3600000
+  expiry-sweep-ms: 3600000
