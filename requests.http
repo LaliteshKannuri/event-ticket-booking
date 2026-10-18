@@ -1,0 +1,39 @@
+### Health check
+GET http://localhost:8080/actuator/health
+
+### 1. Create an event with 10 seats
+POST http://localhost:8080/events
+Content-Type: application/json
+
+{"name": "Jazz Night", "seatCount": 10}
+
+### 2. List the seats (note the seat ids)
+GET http://localhost:8080/events/1/seats
+
+### 3. Hold seats 1 and 2 (change the ids to match step 2). Run it twice: the second answer is a replay (200), not a new booking
+POST http://localhost:8080/events/1/bookings
+Content-Type: application/json
+Idempotency-Key: order-123
+
+{"seatIds": [1, 2]}
+
+### 4. Try to hold the same seats without a key: 409, seat already held
+POST http://localhost:8080/events/1/bookings
+Content-Type: application/json
+
+{"seatIds": [1]}
+
+### 5. Look at the booking
+GET http://localhost:8080/bookings/1
+
+### 6. Confirm it
+POST http://localhost:8080/bookings/1/confirm
+
+### 7. Confirm again: 409, a confirmed booking cannot change
+POST http://localhost:8080/bookings/1/confirm
+
+### 8. Cancel another pending booking (id 2) to release its seats
+POST http://localhost:8080/bookings/2/cancel
+
+### 9. Event summary: total and available seats
+GET http://localhost:8080/events/1

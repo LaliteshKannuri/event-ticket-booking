@@ -1,0 +1,35 @@
+# Render Blueprint: one free web service built from the Dockerfile, plus one free PostgreSQL database.
+# Render injects the database connection details as the DB_* variables that application.yml reads.
+databases:
+  - name: ticket-booking-db
+    databaseName: ticketbooking
+    user: ticket
+    plan: free
+
+services:
+  - type: web
+    name: ticket-booking
+    runtime: docker
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: ticket-booking-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: ticket-booking-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: ticket-booking-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: ticket-booking-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: ticket-booking-db
+          property: password
